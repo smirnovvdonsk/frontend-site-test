@@ -1,15 +1,21 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div v-for="item in truth" :key="item.id">
+    {{ item.id }}
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue';
+import { mapState } from 'vuex';
 
 export default {
+  data() {
+    return {};
+  },
+  computed: mapState(['truth']),
   name: 'App',
-  components: {
-    HelloWorld,
+  components: {},
+  mounted() {
+    this.$store.dispatch('fetch');
   },
 };
 </script>
