@@ -1,29 +1,47 @@
 <template>
-  <div class="container">
-    <div
-      class="
-        row row-cols-1 row-cols-lg-auto
-        align-items-evenly
-        justify-content-start
-      "
-    >
-      <ApaCard v-for="item in truth" :key="item.uuid" :="item" />
+  <div class="card m-4" style="background: #f8f8f8">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <RoomsFilter/>
+          <button @click="applyFilter">Применить</button>
+          <button @click="resetFilter">Сбросить фильтр</button>
+          <br>filterCache{{ filterCache }}
+          <br>filter{{ filter }}
+        </div>
+      </div>
+      <div
+        class="
+          row row-cols-1 row-cols-lg-auto
+          align-items-evenly
+          justify-content-start
+        "
+      >
+        <ApaCard v-for="item in filteredTruth" :key="item.uuid" :="item" />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import {
+  mapState, mapGetters, mapMutations, mapActions,
+} from 'vuex';
 import ApaCard from './components/ApaCard.vue';
+import RoomsFilter from './components/RoomsFilter.vue';
 
 export default {
-  data() {
-    return {};
+  computed: {
+    ...mapState(['filter', 'filterCache']),
+    ...mapGetters(['filterSet', 'filteredTruth']),
   },
-  computed: mapState(['truth']),
-  components: { ApaCard },
+  methods: {
+    ...mapMutations(['applyFilter', 'resetFilter']),
+    ...mapActions(['fetch']),
+  },
+  components: { ApaCard, RoomsFilter },
   mounted() {
-    this.$store.dispatch('fetch');
+    this.fetch();
   },
 };
 </script>
