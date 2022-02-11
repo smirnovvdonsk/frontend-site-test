@@ -17,7 +17,6 @@
         rfitem
       }}</label>
     </div>
-    <br />{{ filterSet }} <br />{{ filterRaw }}
   </div>
 </template>
 

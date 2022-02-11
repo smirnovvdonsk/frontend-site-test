@@ -2,13 +2,24 @@
   <div class="card m-4" style="background: #f8f8f8">
     <div class="container">
       <div class="row">
+
         <div class="col">
-          <RoomsFilter/>
+          <RoomsFilter />
+        </div>
+
+        <div
+          class="col"
+          v-for="rangeFilter in rangeFilters"
+          :key="rangeFilter.setName"
+        >
+          <RangeFilter :="rangeFilter"/>
+        </div>
+
+        <div class="col">
           <button @click="applyFilter">Применить</button>
           <button @click="resetFilter">Сбросить фильтр</button>
-          <br>filterCache{{ filterCache }}
-          <br>filter{{ filter }}
         </div>
+
       </div>
       <div
         class="
@@ -29,17 +40,40 @@ import {
 } from 'vuex';
 import ApaCard from './components/ApaCard.vue';
 import RoomsFilter from './components/RoomsFilter.vue';
+import RangeFilter from './components/RangeFilter.vue';
 
 export default {
   computed: {
     ...mapState(['filter', 'filterCache']),
     ...mapGetters(['filterSet', 'filteredTruth']),
+    rangeFilters() {
+      return [
+        {
+          setName: 'floorRange',
+          commitName: 'floorFilter',
+          toFixed: 0,
+          title: 'ЭТАЖ',
+        },
+        {
+          setName: 'squareRange',
+          commitName: 'squareFilter',
+          toFixed: 1,
+          title: 'ПЛОЩАДЬ, м<sup>2</sup>',
+        },
+        {
+          setName: 'priceRangeMillions',
+          commitName: 'priceFilterMillions',
+          toFixed: 2,
+          title: 'СТОИМОСТЬ, млн.р.',
+        },
+      ];
+    },
   },
   methods: {
-    ...mapMutations(['applyFilter', 'resetFilter']),
+    ...mapMutations(['applyFilter', 'resetFilter', 'floorFilter']),
     ...mapActions(['fetch']),
   },
-  components: { ApaCard, RoomsFilter },
+  components: { ApaCard, RoomsFilter, RangeFilter },
   mounted() {
     this.fetch();
   },
