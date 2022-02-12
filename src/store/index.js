@@ -1,34 +1,6 @@
 import { createStore } from 'vuex';
 import { v4 as uuidv4 } from 'uuid';
-
-function arrayToRange(array = [-Infinity, Infinity]) {
-  return {
-    min: Math.min(...array),
-    max: Math.max(...array),
-  };
-}
-
-class Filter {
-  constructor({
-    rooms = [],
-    floorRange = arrayToRange(),
-    squareRange = arrayToRange(),
-    priceRange = arrayToRange(),
-  } = {}) {
-    this.rooms = [...rooms];
-    this.floorRange = { ...floorRange };
-    this.squareRange = { ...squareRange };
-    this.priceRange = { ...priceRange };
-  }
-
-  get priceRangeMillions() {
-    return { min: this.priceRange.min / 1000000, max: this.priceRange.max / 1000000 };
-  }
-
-  set priceRangeMillions(value) {
-    this.priceRange = { min: value.min * 1000000, max: value.max * 1000000 };
-  }
-}
+import Filter, { arrayToRange } from './filter';
 
 export default createStore({
   state: {
@@ -70,8 +42,8 @@ export default createStore({
     priceFilterMillions(state, payload) { state.filterCache.priceRangeMillions = { ...payload }; },
     applyFilter(state) { state.filter = new Filter(state.filterCache); },
     resetFilter(state) {
-      state.filterCache = new Filter();
-      state.filter = new Filter();
+      state.filterCache.reset();
+      state.filter.reset();
     },
   },
   actions: {

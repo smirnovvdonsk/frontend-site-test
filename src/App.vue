@@ -1,7 +1,7 @@
 <template>
   <div class="card m-4" style="background: #f8f8f8">
     <div class="container">
-      <div class="row">
+      <div class="row" v-if="truth.length">
 
         <div class="col">
           <RoomsFilter />
@@ -44,26 +44,26 @@ import RangeFilter from './components/RangeFilter.vue';
 
 export default {
   computed: {
-    ...mapState(['filter', 'filterCache']),
+    ...mapState(['truth', 'filter', 'filterCache']),
     ...mapGetters(['filterSet', 'filteredTruth']),
     rangeFilters() {
       return [
         {
           setName: 'floorRange',
           commitName: 'floorFilter',
-          toFixed: 0,
+          tofixed: 0,
           title: 'ЭТАЖ',
         },
         {
           setName: 'squareRange',
           commitName: 'squareFilter',
-          toFixed: 1,
+          tofixed: 1,
           title: 'ПЛОЩАДЬ, м<sup>2</sup>',
         },
         {
           setName: 'priceRangeMillions',
           commitName: 'priceFilterMillions',
-          toFixed: 2,
+          tofixed: 2,
           title: 'СТОИМОСТЬ, млн.р.',
         },
       ];
@@ -75,7 +75,7 @@ export default {
   },
   components: { ApaCard, RoomsFilter, RangeFilter },
   mounted() {
-    this.fetch();
+    setTimeout(() => this.fetch(), 1000);
   },
 };
 </script>
