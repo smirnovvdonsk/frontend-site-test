@@ -34,4 +34,6 @@ export default class Filter {
         this[name].max = Infinity;
       });
   }
+
+  isEqualTo(filter) { return (JSON.stringify(this) === JSON.stringify(filter)); }
 }

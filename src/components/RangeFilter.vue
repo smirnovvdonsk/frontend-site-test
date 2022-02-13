@@ -1,10 +1,10 @@
 <template>
-  <div v-if="rangeSet">
+  <div v-if="rangeSet" class="d-flex flex-column app">
     <div class="filter-title" v-html="title"></div>
-    <div class="filter-inputs">
-      <NumberInput size=3 v-model="min" :tofixed="tofixed"/>
-      <span class="px-2">-</span>
-      <NumberInput size=3 v-model="max" :tofixed="tofixed"/>
+    <div class="d-flex flex-row justify-content-between align-items-center">
+      <NumberInput size=4 v-model="min" :tofixed="tofixed"/>
+      <div class="translucent px-1">-</div>
+      <NumberInput size=4 v-model="max" :tofixed="tofixed"/>
     </div>
     <div class="range-slider">
       <div class="range-slider__track-container" ref="widthContainer">
@@ -13,6 +13,7 @@
           :style="{ left: sliderLeft1 }"
           @dragstart="() => false"
           @mousedown="onMouseDown('sliderLeft1', $event)"
+          @touchstart="onMouseDown('sliderLeft1', $event)"
         >
           <div class="range-slider__thumb"></div>
         </div>
@@ -21,6 +22,7 @@
           :style="{ left: sliderLeft2 }"
           @dragstart="() => false"
           @mousedown="onMouseDown('sliderLeft2', $event)"
+          @touchstart="onMouseDown('sliderLeft2', $event)"
         >
           <div class="range-slider__thumb"></div>
         </div>
@@ -99,10 +101,10 @@ export default {
       thumb.style.transition = 'none';
       app.$refs.fill.style.transition = 'none';
       const fullWidth = app.$refs.widthContainer.clientWidth;
-      const startX = event.pageX;
+      const startX = event.pageX || event.changedTouches[0].screenX;
       const startPercent = +app[valueName].replace('%', '');
       function commit(e) {
-        const stopX = e.pageX;
+        const stopX = e.pageX || e.changedTouches[0].screenX;
         const deltaX = stopX - startX;
         const deltaPercent = (deltaX / fullWidth) * 100;
         const finalPercent = startPercent + deltaPercent;
@@ -112,15 +114,21 @@ export default {
         commit(e);
       }
       document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('touchmove', onMouseMove);
       function onMouseUp(e) {
         document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('touchmove', onMouseMove);
         commit(e);
         document.removeEventListener('dragstart', onDragStart);
         thumb.style.transition = '';
         app.$refs.fill.style.transition = '';
         document.removeEventListener('mouseup', onMouseUp);
+        document.removeEventListener('touchend', onMouseUp);
+        document.removeEventListener('touchcancel', onMouseUp);
       }
       document.addEventListener('mouseup', onMouseUp);
+      document.addEventListener('touchend', onMouseUp);
+      document.addEventListener('touchcancel', onMouseUp);
     },
   },
   components: { NumberInput },
@@ -131,22 +139,25 @@ export default {
 $slider-track-size: 2px;
 $slider-thumb-container-size: 24px;
 $slider-thumb-size: 16px;
-.filter-inputs {
-  input {
-    width: 45%;
-  }
-  span {
-    width: 10%;
-  }
+$margin-minimum: calc($slider-thumb-container-size/2);
+.app {
+  padding-left: $margin-minimum;
+  padding-right: $margin-minimum;
+}
+.translucent {
+  opacity: 0.5;
+}
+.filter-title {
+  font-weight: bold;
+  font-size: 12px;
+  line-height: 28px;
 }
 .range-slider {
-  $margin-minimum: calc($slider-thumb-container-size/2 + 3px);
-  $margin-x: $margin-minimum;
-  $margin-y: calc($margin-minimum + 3px);
+  $margin-y: calc($margin-minimum + 5px);
   margin-top: $margin-y;
   margin-bottom: $margin-y;
-  margin-left: $margin-x;
-  margin-right: $margin-x;
+  margin-left: 0;
+  margin-right: 0;
   .range-slider__track-container {
     background: #D8D8D8;
     padding: 0;

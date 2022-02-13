@@ -1,12 +1,37 @@
 <template>
-  <div class="apartment-card">
-    <div v-show="floor" class="floor">{{ floor }} этаж</div>
-    <div v-show="rooms" class="rooms">{{ rooms }} {{ roomsWord }}</div>
-    <div v-show="square" class="square">{{ square }}м<sup>2</sup></div>
-    <div v-show="number" class="number">№{{ number }}</div>
-    <img v-show="plan" class="plan" :src="plan" />
-    <div v-show="price" class="price">{{ priceTriads }}р.</div>
-    <div class="price-per-square-meter">{{ pricePerSquareMeter }}р. за м<sup>2</sup></div>
+  <div class="d-flex flex-column
+    justify-content-between align-items-stretch
+    card shadow mx-1 my-2 p-0 component"
+  >
+
+          <div class="d-flex justify-content-between m-2">
+            <div v-show="floor" class="translucent">{{ floor }} этаж</div>
+            <div class="d-flex flex-row">
+              <div v-show="rooms">{{ rooms }} {{ roomsWord }}</div>
+              <div v-show="rooms && square" class="translucent mx-1">-</div>
+              <div v-show="square">{{ square }}м<sup>2</sup></div>
+            </div>
+          </div>
+
+          <div class="d-flex flex-column number-and-plan m-2 my-0 p-0">
+            <div v-show="number" class="number align-self-end px-2">№{{ number }}</div>
+            <div class="plan align-self-center text-center">
+              <img v-show="plan" class="img-fluid m-0" :src="plan" />
+            </div>
+          </div>
+
+          <div class="d-flex flex-column align-items-end m-2 px-0">
+            <div v-show="price" class="price">{{ priceTriads }}р.</div>
+            <div class="price-per-square-meter">{{ pricePerSquareMeter }}р. за м<sup>2</sup></div>
+            <div class="align-self-stretch m-0 mt-2 p-0 details">
+              <button type="button"
+                class="btn btn-primary w-100 text-light"
+              >
+                ПОДРОБНЕЕ
+              </button>
+            </div>
+          </div>
+
   </div>
 </template>
 
@@ -56,31 +81,80 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.floor {
-  @extend .rooms;
-  opacity: 0.5;
-}
-.rooms {
-  left: 120px;
-  top: 8px;
-  font-size: 12px;
+$plan-height: 188px;
+%font {
   font-weight: bold;
   line-height: 28px;
-  color: #2c323a;
+  font-size: 12px;
 }
-.square {
-  @extend .rooms;
+
+@keyframes fade {
+  0% {
+    transform: scale(0.01);
+  }
+  100% {
+    transform: scale(1.0);
+  }
+}
+
+.component {
+  @extend %font;
+  height: 350px;
+  &:hover {
+    .details {
+      button {
+        display: unset;
+      }
+    }
+    .plan {
+      height: calc($plan-height - 50px);
+      img {
+        height: calc($plan-height - 50px);
+      }
+    }
+  }
+}
+.translucent  {
+  opacity: 0.5;
+}
+%plan-border {
+  border: 1px solid #EBEBEB;
+}
+$plan-border-radius: 5px;
+.number-and-plan {
+  @extend %plan-border;
+  border-radius: $plan-border-radius;
+}
+.number {
+  font-size: 14px;
+  @extend %plan-border;
+  border-top: none;
+  border-right: none;
+  border-bottom-left-radius: $plan-border-radius;
 }
 .plan {
-  width: 188px;
+  //width: 230px;
+  height: $plan-height;
+  margin-right: $plan-border-radius;
+  margin-left: $plan-border-radius;
+  margin-bottom: $plan-border-radius;
 }
 .price {
-  @extend .rooms;
   font-size: 20px;
 }
 .price-per-square-meter {
-  @extend .price;
   font-size: 12px;
-  opacity: 0.5;
+  @extend .translucent;
+}
+.details {
+  button {
+    @extend %font;
+    display: none;
+    animation: 0.3s fade;
+    font-size: 14px;
+    border-radius: 2px;
+    border-bottom-left-radius: $plan-border-radius;
+    border-bottom-right-radius: $plan-border-radius;
+  }
 }
 </style>

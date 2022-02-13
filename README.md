@@ -1,29 +1,11 @@
 # frontend-site-test
+Тестовое задание.
 
-## Project setup
-```
-npm install
-```
+Примечания:
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your unit tests
-```
-npm run test:unit
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+* Использовал Vue 3 вместо Vue 2
+* Файл data.json содержал следующие недостатки:
+  * Все помещения являются студиями (``"is_studio":1``) независимо от количества комнат, поэтому фильтр составлялся из текстового свойства ``size``.
+  * Свойства ``id`` неуникальны, поэтому после fetch к объекту примешиваются случайные uuid, чтобы скормить их ``v-bind:key``.
+* Слайдеры диапазонов пришлось делать ручками с нуля, потому что bootstrap в принципе ничего подобного не содержит, а vuetify для Vue 3 находится ещё в глубокой альфе и тупо не запускается.
+* Юнит-тесты не прикручивал, ибо их не было в задании, но шаблоны не стал удалять из проекта.

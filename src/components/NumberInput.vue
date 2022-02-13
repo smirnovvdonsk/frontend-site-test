@@ -1,6 +1,6 @@
 <template>
     <input
-      class="form-input mx-0"
+      class="form-control text-center mx-0 px-1"
       :class="{ 'is-invalid': isInvalid }"
       v-model="stringValue"
       @input.prevent="onInput"
@@ -93,3 +93,10 @@ export default {
   },
 };
 </script>
+
+<style scoped lang="scss">
+@import "../_variables.scss";
+input {
+  color: $text-color;
+}
+</style>

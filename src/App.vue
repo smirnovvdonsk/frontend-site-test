@@ -1,34 +1,53 @@
 <template>
-  <div class="card m-4" style="background: #f8f8f8">
-    <div class="container">
-      <div class="row" v-if="truth.length">
-
-        <div class="col">
-          <RoomsFilter />
-        </div>
-
+  <div class="card outer-card">
+    <div
+      class="card inner-card m-2 m-xl-4 px-5 py-4"
+    >
+      <h1>LOREM IPSUM DOLOR SIT</h1>
+      <div class="d-flex flex-column align-items-between m-0 p-0">
+        <!-- Filters -->
         <div
-          class="col"
-          v-for="rangeFilter in rangeFilters"
-          :key="rangeFilter.setName"
+          class="
+            d-flex
+            flex-column flex-lg-row
+            justify-content-between
+            justify-content-xxl-center
+            mx-0
+          "
+          v-if="truth.length"
         >
-          <RangeFilter :="rangeFilter"/>
-        </div>
+          <div class="mx-0 mx-lg-1 mx-xl-3">
+            <RoomsFilter />
+          </div>
 
-        <div class="col">
-          <button @click="applyFilter">Применить</button>
-          <button @click="resetFilter">Сбросить фильтр</button>
-        </div>
+          <div
+            class="mx-0 mx-lg-1 mx-xl-3"
+            v-for="rangeFilter in rangeFilters"
+            :key="rangeFilter.setName"
+          >
+            <RangeFilter :="rangeFilter" />
+          </div>
 
-      </div>
-      <div
-        class="
-          row row-cols-1 row-cols-lg-auto
-          align-items-evenly
-          justify-content-start
-        "
-      >
-        <ApaCard v-for="item in filteredTruth" :key="item.uuid" :="item" />
+          <div class="flex-lg-grow-1 flex-xxxl-grow-0 mx-0 mx-md-5 m-lg-1 px-5 p-lg-0">
+            <button
+              type="button"
+              class="btn btn-primary w-100 text-light apply-button"
+              :class="{ 'apply-blink': filterIsChanged }"
+              @click="applyFilter"
+            >
+              ПРИМЕНИТЬ
+            </button>
+            <div class="reset-button text-center" @click="resetFilter">
+              СБРОСИТЬ ФИЛЬТР
+            </div>
+          </div>
+        </div>
+        <!-- Cards -->
+        <div class="apa-grid">
+          <transition-group name="apa-list-animation">
+            <ApaCard v-for="item in filteredTruth" :key="item.uuid" :="item" />
+          </transition-group>
+        </div>
       </div>
     </div>
   </div>
@@ -68,6 +87,9 @@ export default {
         },
       ];
     },
+    filterIsChanged() {
+      return !this.filter.isEqualTo(this.filterCache);
+    },
   },
   methods: {
     ...mapMutations(['applyFilter', 'resetFilter', 'floorFilter']),
@@ -84,117 +106,91 @@ export default {
 @import url("/fonts/GothamPro/styles.css");
 @import url("/fonts/GothamPro-Bold/styles.css");
 
-@import "bootstrap/scss/_functions";
-$font-family-sans-serif: "Gotham Pro", system-ui, -apple-system, "Segoe UI",
-  "Liberation Sans", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-  "Apple Color Emoji", "Twemoji Mozilla", "Segoe UI Emoji", "Segoe UI Symbol",
-  "Noto Color Emoji";
+@import "./_variables.scss";
+
 @import "bootstrap/scss/bootstrap";
 
 body {
-  background-color: #2f2e2d;
+  background-color: $site-background;
+  color: $text-color;
 }
 
-.apartment-card {
-  @extend .card;
-  @extend .shadow;
-  @extend .mx-1;
-  @extend .my-2;
-  &-header {
-    @extend .px-2;
-    @extend .py-1;
-  }
+h1 {
+  font-weight: normal;
+  font-size: 34px;
+  text-align: center;
 }
 
-/*
-Анимации появлений, скрытий, переходов */
-
-%default-transition {
-  transition: all 0.2s ease;
+.outer-card {
+  background: white;
+  border: none;
+  border-radius: 10px;
+  position: absolute;
+  $margin: 10px;
+  height: calc(100% - 2 * $margin);
+  width: calc(100% - 2 * $margin);
+  transform: translate($margin, $margin);
+}
+.inner-card {
+  background: #f8f8f8;
+  border: none;
+  border-radius: 10px;
+  overflow-y: auto;
+  height: 100%;
 }
 
-%fade {
+.apa-grid {
+  display: grid;
+  grid-gap: 5px;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 250px));
+  justify-content: space-between;
+}
+
+.apa-list-animation-move,
+.apa-list-animation-enter-active,
+.apa-list-animation-leave-active {
+  transition: all 0.5s ease;
+}
+.apa-list-animation-enter-from,
+.apa-list-animation-leave-to {
   opacity: 0;
+  transform: scale(.1);
 }
 
-%scale {
-  transform: scale(0.1);
+.apa-list-animation-leave-active {
+  position: absolute;
 }
 
-%slide {
-  transform: translateY(-100%);
-  &-invert {
-    transform: translateY(+100%);
+.apply-button {
+  margin-top: 28px;
+  margin-bottom: 14px;
+  $padding-y: 7px;
+  padding-top: $padding-y;
+  padding-bottom: $padding-y;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.apply-blink {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  0%,
+  100% {
+    transform: scale(1.05, 1.3);
+    box-shadow: 0px 0px 20px $primary;
   }
-}
-
-@mixin default-transition {
-  &-enter,
-  &-leave,
-  &-invert-enter,
-  &-invert-leave {
-    &-active {
-      @extend %default-transition;
-    }
-  }
-}
-
-@mixin fade {
-  @include default-transition;
-  &-enter-from,
-  &-leave-to,
-  &-invert-enter-from,
-  &-invert-leave-to {
-    @extend %fade;
-  }
-}
-
-@mixin scale {
-  @include default-transition;
-  &-enter-from,
-  &-leave-to,
-  &-invert-enter-from,
-  &-invert-leave-to {
-    @extend %scale;
+  50% {
+    transform: unset;
+    box-shadow: unset;
   }
 }
 
-@mixin slide {
-  @include default-transition;
-  &-enter-from,
-  &-leave-to {
-    @extend %slide;
-  }
-  &-invert-enter-from,
-  &-invert-leave-to {
-    @extend %slide-invert;
-  }
-}
-
-.fade {
-  @include fade;
-  &-scale {
-    @include fade;
-    @include scale;
-  }
-}
-
-.slide {
-  @include slide;
-  &-fade {
-    @include fade;
-    @include slide;
-  }
-}
-
-.flip-list {
-  &-item {
-    @extend %default-transition;
-  }
-  &-enter-from,
-  &-leave-to {
-    @extend %fade;
-    @extend %scale;
-  }
+.reset-button {
+  font-weight: bold;
+  font-size: 10px;
+  cursor: pointer;
+  text-decoration: underline 1px $primary;
 }
 </style>
